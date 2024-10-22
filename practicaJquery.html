@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Practica JQUERY</title>
+  </head>
+  <body>
+    <h1>Práctica JQUERY</h1>
+    <select id="selectCurso"></select>
+    <ul id="listaAlumnos"></ul>
+
+    <script src="js/jquery-3.7.1.js"></script>
+    <script>
+      var url = "https://apiejemplos.azurewebsites.net/";
+      $(document).ready(function (data) {
+        console.log("leyendo servicio");
+        var request = "api/Alumnos/Cursos";
+        $.get(url + request, function (data) {
+          $.each(data, function (index, cursos) {
+            var option = $("<option>", { text: cursos, value: cursos });
+            $("#selectCurso").append(option);
+          });
+        });
+
+        $("#selectCurso").change(function () {
+          var selectCursoId = $(this).val();
+          cargarAlumnos(selectCursoId);
+        });
+
+        function cargarAlumnos(idcurso) {
+          var requestAlumnos = "api/Alumnos/FiltrarCurso/" + idcurso;
+          $("#listaAlumnos").empty();
+          $.ajax({
+            url: url + requestAlumnos,
+            type: "GET",
+            success: function (alumnos) {
+              $.each(alumnos, function (index, alumno) {
+                var lista =
+                  "<li>" + alumno.nombre + " " + alumno.apellidos + "</li>";
+                $("#listaAlumnos").append(lista);
+              });
+            },
+          });
+        }
+      });
+    </script>
+  </body>
+</html>
